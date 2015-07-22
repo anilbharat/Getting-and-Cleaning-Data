@@ -28,24 +28,36 @@ extract_features <- grepl("mean|std", features)
 
 # Load and process X_test & y_test data.
 X_test <- read.table("./UCI HAR Dataset/test/X_test.txt")
+
+# read y test
+X_test
 y_test <- read.table("./UCI HAR Dataset/test/y_test.txt")
+
+#y_test
 subject_test <- read.table("./UCI HAR Dataset/test/subject_test.txt")
 
+subject_test
+features
 names(X_test) = features
-
+names(X_test)
 # Extract only the measurements on the mean and standard deviation for each measurement.
 X_test = X_test[,extract_features]
-
+X_test
 # Load activity labels
 y_test[,2] = activity_labels[y_test[,1]]
 names(y_test) = c("Activity_ID", "Activity_Label")
 names(subject_test) = "subject"
 
+y_test
+
 # Bind data
 test_data <- cbind(as.data.table(subject_test), y_test, X_test)
 
+test_data
 # Load and process X_train & y_train data.
 X_train <- read.table("./UCI HAR Dataset/train/X_train.txt")
+X_train
+
 y_train <- read.table("./UCI HAR Dataset/train/y_train.txt")
 
 subject_train <- read.table("./UCI HAR Dataset/train/subject_train.txt")
@@ -66,15 +78,21 @@ train_data <- cbind(as.data.table(subject_train), y_train, X_train)
 # Merge test and train data
 data = rbind(test_data, train_data)
 
+data
+colnames(data)
+id_labels
 id_labels   = c("subject", "Activity_ID", "Activity_Label")
+?setdiff
 data_labels = setdiff(colnames(data), id_labels)
+data_labels
 melt_data      = melt(data, id = id_labels, measure.vars = data_labels)
-
+melt_data
 # Apply mean function to dataset using dcast function
 tidy_data   = dcast(melt_data, subject + Activity_Label ~ variable, mean)
 
+tidy_data
+
 View(tidy_data)
 
-write.table(tidy_data, file = "./tidy_data.txt")
-
-
+write.table(tidy_data, file = "./tidy_data.txt", row.name=FALSE)
+View(tidy_data)
